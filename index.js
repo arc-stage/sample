@@ -103,3 +103,31 @@ async function Load() {
 }
 
 Load();
+
+document.querySelector("#download3d").addEventListener("click", async () => {
+  const url =
+    "https://raw.githubusercontent.com/arc-stage/sample/refs/heads/main/steps/CX81B-24S1.stp";
+  const filename = "CX81B-24S1.stp";
+
+  fetch(url)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("ネットワークエラー: " + response.statusText);
+      }
+      return response.blob();
+    })
+    .then((blob) => {
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl); // メモリを解放
+    })
+    .catch((error) => {
+      console.error("ダウンロードに失敗しました:", error);
+      alert("ファイルのダウンロードに失敗しました。");
+    });
+});
