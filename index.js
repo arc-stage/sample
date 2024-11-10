@@ -4,11 +4,7 @@ async function LoadGeometry(targetObject) {
 
   // download a step file
   let fileUrl =
-    "https://raw.githubusercontent.com/kovacsv/occt-import-js/main/test/testfiles/cax-if/as1_pe_203.stp";
-  // // let fileUrl =
-  // //   "https://hirose-sample.s3.ap-northeast-1.amazonaws.com/steps/WRF-2400942.stp";
-  // let fileUrl =
-  //   "https://hirose-sample.s3.ap-northeast-1.amazonaws.com/steps/CX81B-24S1_v3.stp";
+    "https://raw.githubusercontent.com/arc-stage/sample/refs/heads/main/steps/CX81B-24S1.stp";
   let response = await fetch(fileUrl);
   let buffer = await response.arrayBuffer();
 
@@ -43,7 +39,7 @@ async function LoadGeometry(targetObject) {
       );
       material = new THREE.MeshPhongMaterial({ color: color });
     } else {
-      material = new THREE.MeshPhongMaterial({ color: 0xcccccc });
+      material = new THREE.MeshPhongMaterial({ color: 0xeeeeee });
     }
 
     const mesh = new THREE.Mesh(geometry, material);
@@ -52,41 +48,58 @@ async function LoadGeometry(targetObject) {
 }
 
 async function Load() {
-  const width = window.innerWidth;
-  const height = window.innerHeight;
+  const width = 360;
+  const height = 300;
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(width, height);
-  renderer.setClearColor(0xfafafa);
-  document.body.appendChild(renderer.domElement);
+  renderer.setClearColor(0xdddddd);
+  const wrapper = document.querySelector("#wrapper");
+  wrapper.appendChild(renderer.domElement);
 
-  const camera = new THREE.PerspectiveCamera(45, width / height, 1.0, 100000.0);
-  camera.position.set(5000.0, 15000.0, 10000.0);
+  const camera = new THREE.PerspectiveCamera(45, width / height, 1, 100000.0);
   camera.up.set(0.0, 0.0, 1.0);
-  camera.lookAt(new THREE.Vector3(0.0, 0.0, 0.0));
 
   const scene = new THREE.Scene();
 
-  const ambientLight = new THREE.AmbientLight(0x444444);
+  const ambientLight = new THREE.AmbientLight(0x222222);
   scene.add(ambientLight);
 
   const directionalLight = new THREE.DirectionalLight(0x888888);
-  directionalLight.position.set(
-    camera.position.x,
-    camera.position.y,
-    camera.position.z
-  );
   scene.add(directionalLight);
 
   const mainObject = new THREE.Object3D();
   await LoadGeometry(mainObject);
+
+  // Adjust camera and controls
+  const box = new THREE.Box3().setFromObject(mainObject);
+  const center = box.getCenter(new THREE.Vector3());
+  const size = box.getSize(new THREE.Vector3());
+
+  // Position the camera
+  const maxDim = Math.max(size.x, size.y, size.z);
+  const fov = camera.fov * (Math.PI / 180);
+  let cameraZ = Math.abs(maxDim / Math.sin(fov / 2));
+
+  camera.position.set(center.x, center.y, cameraZ * 1.2);
+  camera.lookAt(center);
+
+  // Update directional light position
+  directionalLight.position.copy(camera.position);
+
   scene.add(mainObject);
 
-  renderer.setAnimationLoop((time) => {
-    mainObject.rotation.x = time / 2000;
-    mainObject.rotation.y = time / 1000;
+  // Add OrbitControls for interaction
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.target.copy(center);
+  controls.update();
+
+  // Render loop
+  function animate() {
+    requestAnimationFrame(animate);
     renderer.render(scene, camera);
-  });
+  }
+  animate();
 }
 
 Load();

@@ -9,22 +9,59 @@
       body {
         margin: 0px;
         padding: 0px;
-        width: 50vw;
-        height: 50vh;
+        width: 100vw;
+        height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
       }
     </style>
     <script
-      src="https://cdn.jsdelivr.net/npm/three@0.142.0/build/three.min.js"
-      defer
-    ></script>
-    <script
       src="https://cdn.jsdelivr.net/npm/occt-import-js@0.0.22/dist/occt-import-js.min.js"
       defer
     ></script>
+    <script src="https://unpkg.com/three@0.142.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.142.0/examples/js/controls/OrbitControls.js"></script>
     <script src="./index.js" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body></body>
+  <body class="w-[1200px] mx-auto">
+    <div class="w-full mx-auto flex justify-between">
+      <div class="flex flex-col rounded-md">
+        <div
+          id="wrapper"
+          class="w-[360px] h-[300px] bg-slate-200 flex items-center justify-center"
+        ></div>
+        <div
+          class="bg-amber-400 text-white flex justify-center items-center cursor-pointer h-10 rounded-br-md rounded-bl-md"
+        >
+          Download
+        </div>
+      </div>
+      <div class="flex flex-col rounded-md">
+        <div
+          class="w-[360px] h-[300px] bg-slate-200 flex items-center justify-center text-slate-400"
+        >
+          footprint
+        </div>
+        <div
+          class="bg-amber-400 text-white flex justify-center items-center cursor-pointer h-10 rounded-br-md rounded-bl-md"
+        >
+          Download
+        </div>
+      </div>
+      <div class="flex flex-col rounded-md">
+        <div
+          class="w-[360px] h-[300px] bg-slate-200 flex items-center justify-center text-slate-400"
+        >
+          symbol
+        </div>
+        <div
+          class="bg-amber-400 text-white flex justify-center items-center cursor-pointer h-10 rounded-br-md rounded-bl-md"
+        >
+          Download
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
